@@ -46,6 +46,7 @@ public class TopicosController {
 	}
 //Metodo de cadastro de um novo topico
 	@PostMapping
+	@Transactional
 	public ResponseEntity<TopicoDto> cadastrar(@RequestBody @Valid TopicoForm form, UriComponentsBuilder uriBuilder) {
 		Topico topico = form.converter(cursoRepository);
 		topicoRepository.save(topico);
@@ -65,6 +66,14 @@ public class TopicosController {
 		Topico topico = form.atualizar(id,topicoRepository);
 		return ResponseEntity.ok(new TopicoDto(topico));
 
+	}
+
+	//Metodo de exclusão de Topico
+	@DeleteMapping("/{id}")
+	@Transactional
+	public ResponseEntity remover(@PathVariable Long id){
+		topicoRepository.deleteById(id);
+		return ResponseEntity.ok().build();
 	}
 
 }
