@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import br.com.alura.forum.controller.dto.DetalhesDoTopicoDto;
+import br.com.alura.forum.controller.form.AtualzacaoTopicoForm;
 import br.com.alura.forum.controller.form.TopicoForm;
 import br.com.alura.forum.repository.CursoRepository;
 import br.com.alura.forum.repository.TopicoRepository;
@@ -17,6 +18,7 @@ import br.com.alura.forum.modelo.Curso;
 import br.com.alura.forum.modelo.Topico;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 @RestController
@@ -29,7 +31,7 @@ public class TopicosController {
 	@Autowired
 	private CursoRepository cursoRepository;
 
-
+//Metodo de listagem dos topicos existentes
 	@GetMapping
 	public List<TopicoDto> lista(String nomeCurso) {
 		if (nomeCurso == null) {
@@ -42,7 +44,7 @@ public class TopicosController {
 		}
 
 	}
-
+//Metodo de cadastro de um novo topico
 	@PostMapping
 	public ResponseEntity<TopicoDto> cadastrar(@RequestBody @Valid TopicoForm form, UriComponentsBuilder uriBuilder) {
 		Topico topico = form.converter(cursoRepository);
@@ -50,11 +52,19 @@ public class TopicosController {
 		URI uri = uriBuilder.path("/topicos/{id}").buildAndExpand(topico.getId()).toUri();
 		return ResponseEntity.created(uri).body(new TopicoDto(topico));
 	}
-
+//Metodo de detalhamento(filtragem de pesquisa)
 	@GetMapping("/{id}")
 	public DetalhesDoTopicoDto detalhar(@PathVariable Long id){
 		Topico topico = topicoRepository.getOne(id);
 		return new DetalhesDoTopicoDto(topico);
+	}
+	//Metodo para atualizar um topico especifico
+	@PutMapping("/{id}")
+	@Transactional
+	public ResponseEntity<TopicoDto> atualizar (@PathVariable Long id,@RequestBody @Valid AtualzacaoTopicoForm form ){
+		Topico topico = form.atualizar(id,topicoRepository);
+		return ResponseEntity.ok(new TopicoDto(topico));
+
 	}
 
 }
