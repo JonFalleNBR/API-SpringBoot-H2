@@ -11,6 +11,7 @@ import br.com.alura.forum.controller.form.TopicoForm;
 import br.com.alura.forum.repository.CursoRepository;
 import br.com.alura.forum.repository.TopicoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -40,6 +41,7 @@ public class TopicosController {
 	//Metodo de listagem dos topicos existentes
 	//RequestParam avisa para o Spring que o parametro do metodo é obrigatorio
 	@GetMapping
+	@Cacheable(value = "ListaDeTopicos")// Cache de otimização
 	public Page<TopicoDto> lista(@RequestParam(required = false) String nomeCurso,@PageableDefault(sort = "id", direction = Sort.Direction.ASC, page = 0, size = 10) Pageable paginacao) { //Essa linha é uma versão simplicada da linha abaixo
 //	Pageable paginacao = PageRequest.of(pagina,qtd, Sort.Direction.ASC,ordenacao);//Direction.ASC e o parametro Ordenação servem para ordenar os topicos de acordo com a requisição do usuario
 
